@@ -355,6 +355,496 @@
             return;
         }
 
+        // Logic for Cold Syrup (Fixed the 19.1 - 19.9 gap)
+        let coldSyrupDose = "N/A";
+        if (weight >= 3 && weight < 4) coldSyrupDose = "4 drops";
+        else if (weight >= 4 && weight < 5) coldSyrupDose = "5 drops";
+        else if (weight >= 5 && weight < 6) coldSyrupDose = "6 drops";
+        else if (weight >= 6 && weight <= 8) coldSyrupDose = "0.4 ml";
+        else if (weight > 8 && weight <= 11) coldSyrupDose = "2.5 ml";
+        else if (weight > 11 && weight <= 13) coldSyrupDose = "3.0 ml";
+        else if (weight > 13 && weight <= 16) coldSyrupDose = "3.5 ml";
+        else if (weight > 16 && weight < 20) coldSyrupDose = "4.0 ml"; 
+        else if (weight >= 20) coldSyrupDose = "5.0 ml";
+
+        // Logic for Cough Syrup (Fixed the 17.1 - 17.9 gap)
+        let coughSyrupDose = "N/A";
+        if (weight < 9) coughSyrupDose = "Not Recommended (<9kg)";
+        else if (weight >= 9 && weight <= 12) coughSyrupDose = "2.5 ml";
+        else if (weight > 12 && weight <= 15) coughSyrupDose = "3.0 ml";
+        else if (weight > 15 && weight < 18) coughSyrupDose = "3.5 ml"; 
+        else if (weight >= 18) coughSyrupDose = "4.0 ml";
+
+        // Tablet Logic
+        const paraTarget = 15 * weight;
+        const bestParaTablet = getBestParacetamolTablet(paraTarget);
+
+        const emesetMg = 0.1 * weight;
+        const emesetTabResult = getGenericTabletSuggestion(emesetMg, 4);
+
+        const categories = [
+            {
+                title: "Paracetamol",
+                icon: "fa-capsules",
+                items: [
+                    { name: "Drops (ml)", dose: formatNum((15 * weight) / 100) + " ml", formula: "(15 * weight) / 100" },
+                    { name: "Dolo 120 (ml)", dose: formatNum((15 * 5 * weight) / 120) + " ml", formula: "(15 * 5 * weight) / 120" },
+                    { name: "Dolo 250 (ml)", dose: formatNum((15 * 5 * weight) / 250) + " ml", formula: "(15 * 5 * weight) / 250" },
+                    { name: "Fepanil 500 (ml)", dose: formatNum((15 * 5 * weight) / 500) + " ml", formula: "(15 * 5 * weight) / 500" },
+                    { name: "Tablet Suggestion", dose: bestParaTablet, formula: `Target = ${formatNum(paraTarget)}mg (15mg * weight)` }
+                ]
+            },
+            {
+                title: "Cold & Cough Syrup",
+                icon: "fa-snowflake",
+                items: [
+                    { name: "Cold Syrup", dose: coldSyrupDose, formula: "Weight-based Chart" },
+                    { name: "Cough Syrup", dose: coughSyrupDose, formula: "Weight-based Chart" },
+                    { name: "Syrup Phenergan", dose: formatNum((0.3 * 5 * weight) / 5) + " ml", formula: "(0.3 * 5 * weight) / 5" }
+                ]
+            },
+            {
+                title: "Fepanil-M",
+                icon: "fa-prescription-bottle-medical",
+                items: [
+                    { name: "Fepanil-M 50mg (ml)", dose: formatNum((13 * weight * 5) / 120) + " ml", formula: "(13 * weight * 5) / 120" },
+                    { name: "Fepanil-M 100mg (ml)", dose: formatNum((13 * weight * 5) / 250) + " ml", formula: "(13 * weight * 5) / 250" }
+                ]
+            },
+            {
+                title: "Amoxyclav",
+                icon: "fa-bacteria",
+                items: [
+                    { name: "Megacv 80mg drops (ml)", dose: formatNum(((20 * weight) / 80) / 3) + " ml", formula: "(((20 * weight) / 80) / 3)" },
+                    { name: "Fightox 228mg (ml)", dose: formatNum((15 * 5 * weight) / 228) + " ml", formula: "(15 * 5 * weight) / 228" },
+                    { name: "Augmentin 457mg (ml)", dose: formatNum((15 * 5 * weight) / 400) + " ml", formula: "(15 * 5 * weight) / 400" }
+                ]
+            },
+            {
+                title: "Azithromycin",
+                icon: "fa-tablets",
+                items: [
+                    { name: "Azithral 100mg (ml)", dose: formatNum((10 * 5 * weight) / 100) + " ml", formula: "(10 * 5 * weight) / 100" },
+                    { name: "Azithral 200mg (ml)", dose: formatNum((10 * 5 * weight) / 200) + " ml", formula: "(10 * 5 * weight) / 200" }
+                ]
+            },
+            {
+                title: "Vomiting",
+                icon: "fa-face-dizzy",
+                items: [
+                    { name: "Drops Domstal Baby (ml)", dose: formatNum((0.4 * weight) / 10) + " ml", formula: "(0.4 * weight) / 10" },
+                    { name: "Syrup Emeset (ml)", dose: formatNum((0.1 * 5 * weight) / 2) + " ml", formula: "(0.1 * 5 * weight) / 2" },
+                    { name: "Syrup Domstal (ml)", dose: formatNum((0.3 * 5 * weight) / 5) + " ml", formula: "(0.3 * 5 * weight) / 5" },
+                    { name: "Tablet Emeset (4mg)", dose: emesetTabResult, formula: "Target = (0.1 * weight). Closest fraction of 4mg tab." }
+                ]
+            },
+            {
+                title: "Cefixime",
+                icon: "fa-vial",
+                items: [
+                    { name: "Syrup Cefi 50mg (ml)", dose: formatNum((25 * weight) / 50) + " ml", formula: "(25 * weight) / 50" },
+                    { name: "Syrup Ziprox 100mg (ml)", dose: formatNum((25 * weight) / 100) + " ml", formula: "(25 * weight) / 100" },
+                    { name: "Drops Monocef (25mg/1ml)", dose: formatNum((5 * weight) / 25) + " ml", formula: "(5 * weight) / 25" }
+                ]
+            },
+            {
+                title: "Hicope",
+                icon: "fa-droplet",
+                items: [
+                    { name: "Formulation 10 (ml)", dose: formatNum((0.5 * 5 * weight) / 10) + " ml", formula: "(0.5 * 5 * weight) / 10" }
+                ]
+            },
+            {
+                title: "Metronidazole",
+                icon: "fa-bug",
+                items: [
+                    { name: "Syrup Metrogyl 200mg (ml)", dose: formatNum((10 * 5 * weight) / 200) + " ml", formula: "(10 * 5 * weight) / 200" }
+                ]
+            },
+            {
+                title: "Ranitidine",
+                icon: "fa-fire",
+                items: [
+                    { name: "Syrup Ranor (ml)", dose: formatNum((3 * 5 * weight) / 75) + " ml", formula: "(3 * 5 * weight) / 75" }
+                ]
+            },
+            {
+                title: "Acyclovir",
+                icon: "fa-virus",
+                items: [
+                    { name: "Syrup Acyclovir (400mg/5ml)", dose: formatNum((20 * 5 * weight) / 400) + " ml", formula: "(20 * 5 * weight) / 400" }
+                ]
+            }
+        ];
+
+        resultsArea.innerHTML = "";
+        resultsArea.style.display = "block";
+
+        categories.forEach((cat) => {
+            const card = document.createElement('div');
+            card.className = 'category-card';
+            
+            let itemsHtml = "";
+            cat.items.forEach(item => {
+                itemsHtml += `
+                    <div class="med-item">
+                        <div class="med-name">
+                            <i class="fa-solid fa-flask"></i> ${item.name}
+                        </div>
+                        <div class="med-dose">${item.dose}</div>
+                        <div class="rationale-box">
+                            <div class="rationale-title"><i class="fa-solid fa-circle-info"></i> Rationale</div>
+                            <div class="rationale-text">${item.formula}</div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            card.innerHTML = `
+                <div class="category-header collapsed" onclick="toggleCategory(this)">
+                    <div class="category-title">
+                        <i class="fa-solid ${cat.icon}"></i> ${cat.title}
+                    </div>
+                    <i class="fa-solid fa-chevron-down toggle-icon"></i>
+                </div>
+                <div class="category-content">
+                    ${itemsHtml}
+                </div>
+            `;
+            resultsArea.appendChild(card);
+        });
+        
+        resultsArea.scrollIntoView({ behavior: 'smooth' });
+    }
+
+    window.toggleCategory = function(header) {
+        header.classList.toggle('collapsed');
+    }
+</script>
+
+</body>
+</html>
+        }
+
+        /* Header */
+        header {
+            padding: 20px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: #fff;
+        }
+        
+        header i {
+            font-size: 1.5rem;
+            color: var(--primary-green);
+        }
+
+        header h1 {
+            font-size: 1.2rem;
+            margin: 0;
+            color: var(--text-dark);
+            font-weight: 700;
+        }
+
+        /* Input Section */
+        .input-section {
+            padding: 24px;
+            background: #fff;
+        }
+
+        .input-section h2 {
+            margin-top: 0;
+            font-size: 1.5rem;
+            color: #000;
+        }
+
+        .input-section p {
+            color: var(--text-light);
+            font-size: 0.95rem;
+            margin-bottom: 20px;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--text-dark);
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        .input-wrapper i {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #888;
+        }
+
+        .input-wrapper input {
+            width: 100%;
+            padding: 14px 14px 14px 40px;
+            font-size: 1rem;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            background-color: #f9f9f9;
+            box-sizing: border-box;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .input-wrapper input:focus {
+            border-color: var(--primary-green);
+            background-color: #fff;
+        }
+
+        .calculate-btn {
+            width: 100%;
+            padding: 16px;
+            margin-top: 20px;
+            background: #80e27e;
+            border: none;
+            border-radius: 8px;
+            color: #0c3b0e;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+        
+        .calculate-btn:hover {
+            opacity: 0.9;
+        }
+
+        /* Results Section */
+        #results-area {
+            background-color: #fafafa;
+            border-top: 1px solid var(--border-color);
+            display: none;
+            padding-bottom: 40px;
+        }
+
+        .category-card {
+            background: white;
+            margin: 15px;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            border: 1px solid #eee;
+            overflow: hidden;
+        }
+
+        .category-header {
+            padding: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            background: #fff;
+            transition: background 0.2s;
+        }
+        
+        .category-header:hover {
+            background: #fdfdfd;
+        }
+
+        .category-title {
+            font-weight: 700;
+            color: var(--text-dark);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.1rem;
+        }
+        
+        .category-title i {
+            color: var(--primary-green);
+        }
+
+        .category-content {
+            padding: 0 16px 16px 16px;
+            border-top: 1px solid #f0f0f0;
+            display: block;
+            animation: fadeIn 0.3s ease-in-out;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Medication Item Styles */
+        .med-item {
+            margin-top: 20px;
+        }
+
+        .med-name {
+            font-weight: 600;
+            color: #444;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 1rem;
+        }
+        
+        .med-name i {
+            font-size: 0.9rem;
+            color: #555;
+        }
+
+        .med-dose {
+            font-size: 1.4rem;
+            font-weight: 800;
+            color: #000;
+            margin: 5px 0 10px 24px;
+        }
+
+        .rationale-box {
+            background-color: #f8f9fa;
+            border: 1px solid #eee;
+            border-radius: 6px;
+            padding: 12px;
+            margin-left: 24px;
+        }
+
+        .rationale-title {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .rationale-text {
+            font-size: 0.85rem;
+            color: #777;
+            font-family: monospace;
+            background: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            border: 1px solid #eee;
+            display: inline-block;
+        }
+        
+        /* Accordion Logic */
+        .toggle-icon {
+            transition: transform 0.3s ease;
+            color: #888;
+        }
+        
+        .collapsed .toggle-icon {
+            transform: rotate(0deg); 
+        }
+        
+        .category-header:not(.collapsed) .toggle-icon {
+            transform: rotate(180deg); 
+        }
+        
+        .collapsed + .category-content {
+            display: none;
+        }
+
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <i class="fa-solid fa-stethoscope"></i>
+        <h1>Dr. Shivankar's</h1>
+    </header>
+
+    <div class="input-section">
+        <h2>Dose Calculator</h2>
+        <p>Enter patient weight to calculate all pediatric doses.</p>
+        
+        <div class="input-group">
+            <label>Patient Weight (kg)</label>
+            <div class="input-wrapper">
+                <i class="fa-solid fa-weight-scale"></i>
+                <input type="number" id="weightInput" placeholder="e.g., 12.5" step="0.1">
+            </div>
+        </div>
+
+        <button class="calculate-btn" onclick="calculateDoses()">Calculate All Doses</button>
+    </div>
+
+    <div id="results-area">
+        </div>
+</div>
+
+<script>
+    function formatNum(num) {
+        if (isNaN(num)) return "N/A";
+        return Math.round(num * 100) / 100;
+    }
+
+    // Advanced logic specifically for Paracetamol to compare 500mg and 650mg simultaneously
+    function getBestParacetamolTablet(targetMg) {
+        const options = [
+            // 500mg allowed fractions
+            { label: "1/4", val: 0.25, size: 500 },
+            { label: "1/3", val: 0.3333, size: 500 },
+            { label: "1/2", val: 0.5, size: 500 },
+            { label: "1", val: 1.0, size: 500 },
+            
+            // 650mg allowed fractions (only half and full)
+            { label: "1/2", val: 0.5, size: 650 },
+            { label: "1", val: 1.0, size: 650 }
+        ];
+
+        let bestOption = options[0];
+        let minDiff = Math.abs(targetMg - (options[0].val * options[0].size));
+
+        options.forEach(opt => {
+            let currentDose = opt.val * opt.size;
+            let diff = Math.abs(targetMg - currentDose);
+            if (diff < minDiff) {
+                minDiff = diff;
+                bestOption = opt;
+            }
+        });
+
+        return `${bestOption.label} of ${bestOption.size}mg tablet`;
+    }
+
+    // Standard tablet logic for other medications (like Emeset), now including 3/4
+    function getGenericTabletSuggestion(targetMg, tabletSize) {
+        const fractions = [
+            { label: "1/4", val: 0.25 },
+            { label: "1/2", val: 0.5 },
+            { label: "3/4", val: 0.75 }, // Added 3/4th specifically for this function
+            { label: "1", val: 1.0 }
+        ];
+        
+        let bestFraction = fractions[0];
+        let minDiff = Math.abs(targetMg - (fractions[0].val * tabletSize));
+
+        fractions.forEach(frac => {
+            let diff = Math.abs(targetMg - (frac.val * tabletSize));
+            if (diff < minDiff) {
+                minDiff = diff;
+                bestFraction = frac;
+            }
+        });
+
+        return `${bestFraction.label} of ${tabletSize}mg tablet`;
+    }
+
+    function calculateDoses() {
+        const weight = parseFloat(document.getElementById('weightInput').value);
+        const resultsArea = document.getElementById('results-area');
+        
+        if (!weight || weight <= 0) {
+            alert("Please enter a valid weight in kg.");
+            return;
+        }
+
         // Logic for Cold Syrup
         let coldSyrupDose = "N/A";
         if (weight >= 3 && weight < 4) coldSyrupDose = "4 drops";
