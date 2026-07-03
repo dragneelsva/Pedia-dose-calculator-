@@ -347,6 +347,75 @@
             margin-left: 4px;
         }
 
+        .chart-toggle {
+            margin-top: 8px;
+            margin-bottom: 4px;
+            background: none;
+            border: none;
+            padding: 0;
+            color: var(--teal);
+            font-family: 'Inter', sans-serif;
+            font-size: 0.82rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .chart-toggle:hover { color: var(--teal-deep); }
+        .chart-toggle:focus-visible {
+            outline: 2px solid var(--teal);
+            outline-offset: 2px;
+        }
+
+        .dose-chart {
+            margin-top: 8px;
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            overflow: hidden;
+            animation: chartReveal 0.22s ease;
+        }
+
+        @keyframes chartReveal {
+            from { opacity: 0; transform: translateY(-4px); }
+            to { opacity: 1; transform: none; }
+        }
+
+        .chart-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 0.78rem;
+        }
+
+        .chart-table th {
+            text-align: left;
+            background: #FAFBFB;
+            color: var(--ink-soft);
+            padding: 8px 10px;
+            font-weight: 600;
+            border-bottom: 1px solid var(--line);
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+            font-size: 0.66rem;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .chart-table td {
+            padding: 7px 10px;
+            border-bottom: 1px solid #F0F3F2;
+            color: var(--ink);
+        }
+
+        .chart-table tr:last-child td { border-bottom: none; }
+
+        .chart-table tr.active-row td {
+            background: var(--teal-tint);
+            color: var(--teal-deep);
+            font-weight: 600;
+        }
+
         .rationale-box {
             background-color: #FAFBFB;
             border: 1px solid #EEF2F1;
@@ -452,6 +521,31 @@
 <script>
     const DEVIATION_WARNING_THRESHOLD = 20;
 
+    const COLD_SYRUP_BANDS = [
+        { label: "3 – <4 kg", dose: "4 drops", test: w => w >= 3 && w < 4 },
+        { label: "4 – <5 kg", dose: "5 drops", test: w => w >= 4 && w < 5 },
+        { label: "5 – <6 kg", dose: "6 drops", test: w => w >= 5 && w < 6 },
+        { label: "6 – 8 kg", dose: "0.4 ml", test: w => w >= 6 && w <= 8 },
+        { label: ">8 – 11 kg", dose: "2.5 ml", test: w => w > 8 && w <= 11 },
+        { label: ">11 – 13 kg", dose: "3.0 ml", test: w => w > 11 && w <= 13 },
+        { label: ">13 – 16 kg", dose: "3.5 ml", test: w => w > 13 && w <= 16 },
+        { label: ">16 – 19 kg", dose: "4.0 ml", test: w => w > 16 && w <= 19 },
+        { label: "20+ kg", dose: "5.0 ml", test: w => w >= 20 }
+    ];
+
+    const COUGH_SYRUP_BANDS = [
+        { label: "<9 kg", dose: "Not Recommended (<9kg)", test: w => w < 9 },
+        { label: "9 – 12 kg", dose: "2.5 ml", test: w => w >= 9 && w <= 12 },
+        { label: ">12 – 15 kg", dose: "3.0 ml", test: w => w > 12 && w <= 15 },
+        { label: ">15 – 17 kg", dose: "3.5 ml", test: w => w > 15 && w <= 17 },
+        { label: "18+ kg", dose: "4.0 ml", test: w => w >= 18 }
+    ];
+
+    function getBandDose(weight, bands) {
+        const match = bands.find(b => b.test(weight));
+        return match ? match.dose : "N/A";
+    }
+
     function formatNum(num) {
         if (isNaN(num)) return "N/A";
         return Math.round(num * 100) / 100;
@@ -555,6 +649,30 @@
         `;
     }
 
+    function buildChartItemHtml(name, doseText, bands, weight, idSuffix) {
+        const chartId = `chart-${idSuffix}`;
+        const rowsHtml = bands.map(b => {
+            const isActive = b.test(weight);
+            return `<tr class="${isActive ? 'active-row' : ''}"><td>${b.label}</td><td>${b.dose}</td></tr>`;
+        }).join('');
+
+        return `
+            <div class="med-item">
+                <div class="med-name"><i class="fa-solid fa-flask"></i> ${name}</div>
+                <div class="med-dose">${doseText}</div>
+                <button type="button" class="chart-toggle" onclick="toggleChart('${chartId}', this)" aria-expanded="false" aria-controls="${chartId}">
+                    <i class="fa-solid fa-table-list"></i> View dosing chart
+                </button>
+                <div class="dose-chart" id="${chartId}" style="display:none;">
+                    <table class="chart-table">
+                        <thead><tr><th>Weight</th><th>Dose</th></tr></thead>
+                        <tbody>${rowsHtml}</tbody>
+                    </table>
+                </div>
+            </div>
+        `;
+    }
+
     function buildTabletDoseHtml(name, result) {
         const deviationRounded = formatNum(result.deviationPct);
         let warningHtml = "";
@@ -584,23 +702,8 @@
         const weight = parseFloat(document.getElementById('weightInput').value);
         const resultsArea = document.getElementById('results-area');
 
-        let coldSyrupDose = "N/A";
-        if (weight >= 3 && weight < 4) coldSyrupDose = "4 drops";
-        else if (weight >= 4 && weight < 5) coldSyrupDose = "5 drops";
-        else if (weight >= 5 && weight < 6) coldSyrupDose = "6 drops";
-        else if (weight >= 6 && weight <= 8) coldSyrupDose = "0.4 ml";
-        else if (weight > 8 && weight <= 11) coldSyrupDose = "2.5 ml";
-        else if (weight > 11 && weight <= 13) coldSyrupDose = "3.0 ml";
-        else if (weight > 13 && weight <= 16) coldSyrupDose = "3.5 ml";
-        else if (weight > 16 && weight <= 19) coldSyrupDose = "4.0 ml";
-        else if (weight >= 20) coldSyrupDose = "5.0 ml";
-
-        let coughSyrupDose = "N/A";
-        if (weight >= 9 && weight <= 12) coughSyrupDose = "2.5 ml";
-        else if (weight > 12 && weight <= 15) coughSyrupDose = "3.0 ml";
-        else if (weight > 15 && weight <= 17) coughSyrupDose = "3.5 ml";
-        else if (weight >= 18) coughSyrupDose = "4.0 ml";
-        else if (weight < 9) coughSyrupDose = "Not Recommended (<9kg)";
+        const coldSyrupDose = getBandDose(weight, COLD_SYRUP_BANDS);
+        const coughSyrupDose = getBandDose(weight, COUGH_SYRUP_BANDS);
 
         const paraTarget = 15 * weight;
         const bestParaTablet = getBestParacetamolTablet(paraTarget);
@@ -624,9 +727,11 @@
                 title: "Cold & Cough Syrup",
                 icon: "fa-snowflake",
                 items: [
-                    { name: "Cold Syrup", dose: coldSyrupDose, formula: "Weight-based Chart" },
-                    { name: "Cough Syrup", dose: coughSyrupDose, formula: "Weight-based Chart" },
                     { name: "Syrup Phenergan", dose: formatNum((0.3 * 5 * weight) / 5) + " ml", formula: "(0.3 * 5 * weight) / 5" }
+                ],
+                chartItems: [
+                    { name: "Cold Syrup", dose: coldSyrupDose, bands: COLD_SYRUP_BANDS },
+                    { name: "Cough Syrup", dose: coughSyrupDose, bands: COUGH_SYRUP_BANDS }
                 ]
             },
             {
@@ -746,6 +851,10 @@
                 itemsHtml += buildRangeDoseHtml(item.name, item.lowerMg, item.upperMg, item.formulaLower, item.formulaUpper);
             });
 
+            (cat.chartItems || []).forEach((item, itemIndex) => {
+                itemsHtml += buildChartItemHtml(item.name, item.dose, item.bands, weight, `${index}-${itemIndex}`);
+            });
+
             card.innerHTML = `
                 <div class="category-header collapsed" onclick="toggleCategory(this)" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();toggleCategory(this);}">
                     <div class="category-title">
@@ -790,6 +899,14 @@
         }, 380);
     }
 
+    window.toggleChart = function(id, btn) {
+        const el = document.getElementById(id);
+        const isOpen = el.style.display !== 'none';
+        el.style.display = isOpen ? 'none' : 'block';
+        btn.classList.toggle('open', !isOpen);
+        btn.setAttribute('aria-expanded', String(!isOpen));
+    }
+
     window.toggleCategory = function(header) {
         header.classList.toggle('collapsed');
     }
@@ -797,4 +914,3 @@
 
 </body>
 </html>
-    
