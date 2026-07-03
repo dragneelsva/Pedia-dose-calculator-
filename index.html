@@ -5,32 +5,45 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dr. Shivankar's Dose Calculator</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary-green: #4CAF50;
-            --bg-gray: #f4f4f4;
-            --text-dark: #333;
-            --text-light: #666;
-            --border-color: #ddd;
-            --card-radius: 12px;
+            --paper: #F5F7F6;
+            --surface: #FFFFFF;
+            --ink: #142420;
+            --ink-soft: #5B6B67;
+            --teal: #0F6E6A;
+            --teal-deep: #0B4F4C;
+            --teal-tint: rgba(15, 110, 106, 0.09);
+            --amber: #E2A33B;
+            --amber-deep: #C68621;
+            --coral: #C1443C;
+            --coral-tint: #FBEEEC;
+            --line: #DCE4E1;
+            --card-radius: 14px;
         }
 
+        * { box-sizing: border-box; }
+
         body {
-            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            background-color: var(--bg-gray);
+            font-family: 'Inter', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--paper);
             margin: 0;
             padding: 20px;
             display: flex;
             justify-content: center;
             min-height: 100vh;
+            color: var(--ink);
         }
 
         .container {
             width: 100%;
             max-width: 480px;
-            background: white;
+            background: var(--surface);
             border-radius: var(--card-radius);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            box-shadow: 0 1px 2px rgba(20,36,32,0.04), 0 10px 30px rgba(20,36,32,0.08);
             overflow: hidden;
             display: flex;
             flex-direction: column;
@@ -38,152 +51,249 @@
 
         /* Header */
         header {
-            padding: 20px;
-            border-bottom: 1px solid var(--border-color);
+            padding: 22px 24px 18px;
             display: flex;
             align-items: center;
-            gap: 10px;
-            background: #fff;
+            gap: 12px;
+            background: var(--surface);
+            border-bottom: 1px solid var(--line);
+            position: relative;
         }
-        
-        header i {
-            font-size: 1.5rem;
-            color: var(--primary-green);
+
+        header::after {
+            content: "";
+            position: absolute;
+            left: 0; right: 0; bottom: -1px;
+            height: 2px;
+            background: linear-gradient(90deg, var(--teal), var(--amber) 60%, transparent);
+        }
+
+        .header-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            background: var(--teal-tint);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .header-icon i {
+            font-size: 1.1rem;
+            color: var(--teal);
+        }
+
+        .header-text .eyebrow {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 0.68rem;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: var(--ink-soft);
+            margin: 0 0 2px;
         }
 
         header h1 {
-            font-size: 1.2rem;
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.15rem;
             margin: 0;
-            color: var(--text-dark);
-            font-weight: 700;
+            color: var(--ink);
+            font-weight: 600;
         }
 
         /* Input Section */
         .input-section {
-            padding: 24px;
-            background: #fff;
+            padding: 26px 24px 22px;
+            background: var(--surface);
         }
 
         .input-section h2 {
-            margin-top: 0;
+            margin: 0 0 6px;
+            font-family: 'Space Grotesk', sans-serif;
             font-size: 1.5rem;
-            color: #000;
+            font-weight: 600;
+            color: var(--ink);
         }
 
         .input-section p {
-            color: var(--text-light);
-            font-size: 0.95rem;
-            margin-bottom: 20px;
+            color: var(--ink-soft);
+            font-size: 0.92rem;
+            margin: 0 0 22px;
+            line-height: 1.4;
         }
 
         .input-group label {
             display: block;
             margin-bottom: 8px;
-            font-weight: 500;
-            color: var(--text-dark);
+            font-size: 0.78rem;
+            font-weight: 600;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+            color: var(--ink-soft);
         }
 
         .input-wrapper {
             position: relative;
+            display: flex;
+            align-items: center;
+            border: 1.5px solid var(--line);
+            border-radius: 10px;
+            background-color: #FBFCFC;
+            transition: border-color 0.2s, box-shadow 0.2s;
+            padding: 0 14px;
+        }
+
+        .input-wrapper:focus-within {
+            border-color: var(--teal);
+            box-shadow: 0 0 0 4px var(--teal-tint);
+            background-color: #fff;
         }
 
         .input-wrapper i {
-            position: absolute;
-            left: 12px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: #888;
+            color: var(--ink-soft);
+            font-size: 0.95rem;
         }
 
         .input-wrapper input {
+            flex: 1;
             width: 100%;
-            padding: 14px 14px 14px 40px;
-            font-size: 1rem;
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            background-color: #f9f9f9;
-            box-sizing: border-box;
+            padding: 15px 8px;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 1.25rem;
+            font-variant-numeric: tabular-nums;
+            border: none;
+            background: transparent;
             outline: none;
-            transition: border-color 0.2s;
+            color: var(--ink);
         }
 
-        .input-wrapper input:focus {
-            border-color: var(--primary-green);
-            background-color: #fff;
+        .input-wrapper input::placeholder {
+            color: #A8B5B1;
+            font-family: 'Inter', sans-serif;
+            font-size: 1rem;
+        }
+
+        .input-unit {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 0.85rem;
+            color: var(--ink-soft);
+            padding-left: 6px;
         }
 
         .calculate-btn {
             width: 100%;
             padding: 16px;
-            margin-top: 20px;
-            background: #80e27e;
+            margin-top: 22px;
+            background: var(--amber);
             border: none;
-            border-radius: 8px;
-            color: #0c3b0e;
+            border-radius: 10px;
+            color: #2B1A02;
+            font-family: 'Inter', sans-serif;
             font-size: 1rem;
             font-weight: 600;
             cursor: pointer;
-            transition: opacity 0.2s;
+            transition: transform 0.12s ease, background 0.2s, box-shadow 0.2s;
+            box-shadow: 0 6px 16px rgba(226, 163, 59, 0.35);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
         }
-        
-        .calculate-btn:hover {
-            opacity: 0.9;
+
+        .calculate-btn:hover { background: var(--amber-deep); }
+        .calculate-btn:active { transform: scale(0.97); }
+        .calculate-btn:focus-visible {
+            outline: 2px solid var(--teal-deep);
+            outline-offset: 3px;
+        }
+        .calculate-btn:disabled {
+            opacity: 0.85;
+            cursor: default;
+        }
+
+        .btn-dots span {
+            display: inline-block;
+            opacity: 0.3;
+            animation: dotPulse 1s infinite;
+        }
+        .btn-dots span:nth-child(2) { animation-delay: 0.15s; }
+        .btn-dots span:nth-child(3) { animation-delay: 0.3s; }
+
+        @keyframes dotPulse {
+            0%, 100% { opacity: 0.25; }
+            50% { opacity: 1; }
         }
 
         /* Results Section */
         #results-area {
-            background-color: #fafafa;
-            border-top: 1px solid var(--border-color);
+            background-color: var(--paper);
+            border-top: 1px solid var(--line);
             display: none;
-            padding-bottom: 40px;
+            padding-bottom: 36px;
         }
 
         .category-card {
-            background: white;
-            margin: 15px;
-            border-radius: 8px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-            border: 1px solid #eee;
+            background: var(--surface);
+            margin: 14px 15px;
+            border-radius: var(--card-radius);
+            box-shadow: 0 1px 2px rgba(20,36,32,0.05);
+            border: 1px solid var(--line);
             overflow: hidden;
+            opacity: 0;
+            transform: translateY(14px);
+            animation: cardReveal 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        @keyframes cardReveal {
+            to { opacity: 1; transform: translateY(0); }
         }
 
         .category-header {
-            padding: 16px;
+            padding: 16px 18px;
             display: flex;
             justify-content: space-between;
             align-items: center;
             cursor: pointer;
-            background: #fff;
+            background: var(--surface);
             transition: background 0.2s;
         }
-        
-        .category-header:hover {
-            background: #fdfdfd;
+
+        .category-header:hover { background: #FAFBFB; }
+        .category-header:focus-visible {
+            outline: 2px solid var(--teal);
+            outline-offset: -2px;
         }
 
         .category-title {
-            font-weight: 700;
-            color: var(--text-dark);
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 600;
+            color: var(--ink);
             display: flex;
             align-items: center;
-            gap: 10px;
-            font-size: 1.1rem;
+            gap: 12px;
+            font-size: 1.02rem;
         }
-        
-        .category-title i {
-            color: var(--primary-green);
+
+        .icon-chip {
+            width: 30px;
+            height: 30px;
+            border-radius: 8px;
+            background: var(--teal-tint);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .icon-chip i {
+            color: var(--teal);
+            font-size: 0.85rem;
         }
 
         .category-content {
-            padding: 0 16px 16px 16px;
-            border-top: 1px solid #f0f0f0;
+            padding: 4px 18px 18px;
+            border-top: 1px solid #F0F3F2;
             display: block;
-            animation: fadeIn 0.3s ease-in-out;
-        }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(-5px); }
-            to { opacity: 1; transform: translateY(0); }
         }
 
         /* Medication Item Styles */
@@ -192,38 +302,64 @@
         }
 
         .med-name {
+            font-size: 0.72rem;
             font-weight: 600;
-            color: #444;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            color: var(--ink-soft);
             display: flex;
             align-items: center;
-            gap: 8px;
-            font-size: 1rem;
-        }
-        
-        .med-name i {
-            font-size: 0.9rem;
-            color: #555;
+            gap: 6px;
         }
 
         .med-dose {
-            font-size: 1.4rem;
-            font-weight: 800;
-            color: #000;
-            margin: 5px 0 10px 24px;
+            font-family: 'IBM Plex Mono', monospace;
+            font-variant-numeric: tabular-nums;
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--ink);
+            margin: 4px 0 10px;
+        }
+
+        .frac-meter {
+            display: flex;
+            gap: 4px;
+            margin-bottom: 10px;
+            max-width: 160px;
+        }
+
+        .frac-segment {
+            flex: 1;
+            height: 7px;
+            border-radius: 3px;
+            background: var(--line);
+        }
+
+        .frac-segment.filled {
+            background: var(--teal);
+        }
+
+        .dose-note {
+            font-family: 'Inter', sans-serif;
+            font-size: 0.82rem;
+            font-weight: 500;
+            color: var(--ink-soft);
+            margin-left: 4px;
         }
 
         .rationale-box {
-            background-color: #f8f9fa;
-            border: 1px solid #eee;
-            border-radius: 6px;
-            padding: 12px;
-            margin-left: 24px;
+            background-color: #FAFBFB;
+            border: 1px solid #EEF2F1;
+            border-radius: 8px;
+            padding: 10px 12px;
         }
 
         .rationale-title {
-            font-size: 0.85rem;
+            font-size: 0.7rem;
             font-weight: 600;
-            color: #333;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+            color: var(--ink-soft);
             margin-bottom: 4px;
             display: flex;
             align-items: center;
@@ -231,57 +367,82 @@
         }
 
         .rationale-text {
-            font-size: 0.85rem;
-            color: #777;
-            font-family: monospace;
-            background: white;
-            padding: 4px 8px;
-            border-radius: 4px;
-            border: 1px solid #eee;
-            display: inline-block;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 0.8rem;
+            color: #4A5754;
         }
-        
+
+        .deviation-warning {
+            margin-top: 8px;
+            padding: 10px 12px;
+            background-color: var(--coral-tint);
+            border-left: 3px solid var(--coral);
+            border-radius: 6px;
+            color: var(--coral);
+            font-size: 0.82rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            animation: warnFlash 1.6s ease-out 1;
+        }
+
+        @keyframes warnFlash {
+            0% { background-color: #F6D8D5; }
+            100% { background-color: var(--coral-tint); }
+        }
+
         /* Accordion Logic */
         .toggle-icon {
             transition: transform 0.3s ease;
-            color: #888;
+            color: var(--ink-soft);
+            font-size: 0.85rem;
         }
-        
-        .collapsed .toggle-icon {
-            transform: rotate(0deg); 
-        }
-        
+
         .category-header:not(.collapsed) .toggle-icon {
-            transform: rotate(180deg); 
+            transform: rotate(180deg);
         }
-        
+
         .collapsed + .category-content {
             display: none;
         }
 
+        @media (prefers-reduced-motion: reduce) {
+            .category-card, .deviation-warning, .btn-dots span {
+                animation: none !important;
+                opacity: 1 !important;
+                transform: none !important;
+            }
+        }
     </style>
 </head>
 <body>
 
 <div class="container">
     <header>
-        <i class="fa-solid fa-stethoscope"></i>
-        <h1>Dr. Shivankar's</h1>
+        <div class="header-icon"><i class="fa-solid fa-stethoscope"></i></div>
+        <div class="header-text">
+            <p class="eyebrow">Clinical Tools</p>
+            <h1>Dr. Shivankar's</h1>
+        </div>
     </header>
 
     <div class="input-section">
         <h2>Dose Calculator</h2>
         <p>Enter patient weight to calculate all pediatric doses.</p>
-        
+
         <div class="input-group">
-            <label>Patient Weight (kg)</label>
+            <label>Patient Weight</label>
             <div class="input-wrapper">
                 <i class="fa-solid fa-weight-scale"></i>
-                <input type="number" id="weightInput" placeholder="e.g., 12.5" step="0.1">
+                <input type="number" id="weightInput" placeholder="e.g., 12.5" step="0.1" inputmode="decimal">
+                <span class="input-unit">kg</span>
             </div>
         </div>
 
-        <button class="calculate-btn" onclick="calculateDoses()">Calculate All Doses</button>
+        <button class="calculate-btn" id="calcBtn" onclick="calculateDoses()">
+            <span id="calcBtnLabel">Calculate All Doses</span>
+        </button>
     </div>
 
     <div id="results-area">
@@ -289,21 +450,19 @@
 </div>
 
 <script>
+    const DEVIATION_WARNING_THRESHOLD = 20;
+
     function formatNum(num) {
         if (isNaN(num)) return "N/A";
         return Math.round(num * 100) / 100;
     }
 
-    // Advanced logic specifically for Paracetamol to compare 500mg and 650mg simultaneously
     function getBestParacetamolTablet(targetMg) {
         const options = [
-            // 500mg allowed fractions
             { label: "1/4", val: 0.25, size: 500 },
             { label: "1/3", val: 0.3333, size: 500 },
             { label: "1/2", val: 0.5, size: 500 },
             { label: "1", val: 1.0, size: 500 },
-            
-            // 650mg allowed fractions (only half and full)
             { label: "1/2", val: 0.5, size: 650 },
             { label: "1", val: 1.0, size: 650 }
         ];
@@ -320,18 +479,26 @@
             }
         });
 
-        return `${bestOption.label} of ${bestOption.size}mg tablet`;
+        const deliveredMg = bestOption.val * bestOption.size;
+        const deviationPct = targetMg > 0 ? Math.abs((deliveredMg - targetMg) / targetMg) * 100 : 0;
+
+        return {
+            text: `${bestOption.label} of ${bestOption.size}mg tablet`,
+            fractionLabel: bestOption.label,
+            deliveredMg: deliveredMg,
+            targetMg: targetMg,
+            deviationPct: deviationPct
+        };
     }
 
-    // Standard tablet logic for other medications (like Emeset), now including 3/4
     function getGenericTabletSuggestion(targetMg, tabletSize) {
         const fractions = [
             { label: "1/4", val: 0.25 },
             { label: "1/2", val: 0.5 },
-            { label: "3/4", val: 0.75 }, // Added 3/4th specifically for this function
+            { label: "3/4", val: 0.75 },
             { label: "1", val: 1.0 }
         ];
-        
+
         let bestFraction = fractions[0];
         let minDiff = Math.abs(targetMg - (fractions[0].val * tabletSize));
 
@@ -343,19 +510,80 @@
             }
         });
 
-        return `${bestFraction.label} of ${tabletSize}mg tablet`;
+        const deliveredMg = bestFraction.val * tabletSize;
+        const deviationPct = targetMg > 0 ? Math.abs((deliveredMg - targetMg) / targetMg) * 100 : 0;
+
+        return {
+            text: `${bestFraction.label} of ${tabletSize}mg tablet`,
+            fractionLabel: bestFraction.label,
+            deliveredMg: deliveredMg,
+            targetMg: targetMg,
+            deviationPct: deviationPct
+        };
     }
 
-    function calculateDoses() {
+    function parseFraction(label) {
+        if (label === "1") return { num: 1, den: 1 };
+        const parts = label.split('/');
+        return { num: parseInt(parts[0], 10), den: parseInt(parts[1], 10) };
+    }
+
+    function buildFractionMeter(label) {
+        const { num, den } = parseFraction(label);
+        let segs = "";
+        for (let i = 0; i < den; i++) {
+            segs += `<div class="frac-segment ${i < num ? 'filled' : ''}"></div>`;
+        }
+        return `<div class="frac-meter" aria-hidden="true">${segs}</div>`;
+    }
+
+    function roundToNearest50(mg) {
+        return Math.round(mg / 50) * 50;
+    }
+
+    function buildRangeDoseHtml(name, lowerMg, upperMg, formulaLower, formulaUpper) {
+        const middleMg = roundToNearest50((lowerMg + upperMg) / 2);
+        return `
+            <div class="med-item">
+                <div class="med-name"><i class="fa-solid fa-flask"></i> ${name}</div>
+                <div class="med-dose">${formatNum(lowerMg)} – ${formatNum(upperMg)} mg <span class="dose-note">(≈ ${middleMg} mg ideal)</span></div>
+                <div class="rationale-box">
+                    <div class="rationale-title"><i class="fa-solid fa-circle-info"></i> Rationale</div>
+                    <div class="rationale-text">Lower: ${formulaLower} · Upper: ${formulaUpper}</div>
+                </div>
+            </div>
+        `;
+    }
+
+    function buildTabletDoseHtml(name, result) {
+        const deviationRounded = formatNum(result.deviationPct);
+        let warningHtml = "";
+        if (result.deviationPct > DEVIATION_WARNING_THRESHOLD) {
+            warningHtml = `
+                <div class="deviation-warning">
+                    <i class="fa-solid fa-triangle-exclamation"></i>
+                    ${deviationRounded}% off target dose — verify before dispensing
+                </div>
+            `;
+        }
+        return `
+            <div class="med-item">
+                <div class="med-name"><i class="fa-solid fa-flask"></i> ${name}</div>
+                <div class="med-dose">${result.text}</div>
+                ${buildFractionMeter(result.fractionLabel)}
+                <div class="rationale-box">
+                    <div class="rationale-title"><i class="fa-solid fa-circle-info"></i> Rationale</div>
+                    <div class="rationale-text">Delivers ${formatNum(result.deliveredMg)}mg vs target ${formatNum(result.targetMg)}mg</div>
+                </div>
+                ${warningHtml}
+            </div>
+        `;
+    }
+
+    function runCalculation() {
         const weight = parseFloat(document.getElementById('weightInput').value);
         const resultsArea = document.getElementById('results-area');
-        
-        if (!weight || weight <= 0) {
-            alert("Please enter a valid weight in kg.");
-            return;
-        }
 
-        // Logic for Cold Syrup (Fixed the 19.1 - 19.9 gap)
         let coldSyrupDose = "N/A";
         if (weight >= 3 && weight < 4) coldSyrupDose = "4 drops";
         else if (weight >= 4 && weight < 5) coldSyrupDose = "5 drops";
@@ -364,18 +592,16 @@
         else if (weight > 8 && weight <= 11) coldSyrupDose = "2.5 ml";
         else if (weight > 11 && weight <= 13) coldSyrupDose = "3.0 ml";
         else if (weight > 13 && weight <= 16) coldSyrupDose = "3.5 ml";
-        else if (weight > 16 && weight < 20) coldSyrupDose = "4.0 ml"; 
+        else if (weight > 16 && weight <= 19) coldSyrupDose = "4.0 ml";
         else if (weight >= 20) coldSyrupDose = "5.0 ml";
 
-        // Logic for Cough Syrup (Fixed the 17.1 - 17.9 gap)
         let coughSyrupDose = "N/A";
-        if (weight < 9) coughSyrupDose = "Not Recommended (<9kg)";
-        else if (weight >= 9 && weight <= 12) coughSyrupDose = "2.5 ml";
+        if (weight >= 9 && weight <= 12) coughSyrupDose = "2.5 ml";
         else if (weight > 12 && weight <= 15) coughSyrupDose = "3.0 ml";
-        else if (weight > 15 && weight < 18) coughSyrupDose = "3.5 ml"; 
+        else if (weight > 15 && weight <= 17) coughSyrupDose = "3.5 ml";
         else if (weight >= 18) coughSyrupDose = "4.0 ml";
+        else if (weight < 9) coughSyrupDose = "Not Recommended (<9kg)";
 
-        // Tablet Logic
         const paraTarget = 15 * weight;
         const bestParaTablet = getBestParacetamolTablet(paraTarget);
 
@@ -390,9 +616,9 @@
                     { name: "Drops (ml)", dose: formatNum((15 * weight) / 100) + " ml", formula: "(15 * weight) / 100" },
                     { name: "Dolo 120 (ml)", dose: formatNum((15 * 5 * weight) / 120) + " ml", formula: "(15 * 5 * weight) / 120" },
                     { name: "Dolo 250 (ml)", dose: formatNum((15 * 5 * weight) / 250) + " ml", formula: "(15 * 5 * weight) / 250" },
-                    { name: "Fepanil 500 (ml)", dose: formatNum((15 * 5 * weight) / 500) + " ml", formula: "(15 * 5 * weight) / 500" },
-                    { name: "Tablet Suggestion", dose: bestParaTablet, formula: `Target = ${formatNum(paraTarget)}mg (15mg * weight)` }
-                ]
+                    { name: "Fepanil 500 (ml)", dose: formatNum((15 * 5 * weight) / 500) + " ml", formula: "(15 * 5 * weight) / 500" }
+                ],
+                tabletItems: [{ name: "Tablet Suggestion", result: bestParaTablet }]
             },
             {
                 title: "Cold & Cough Syrup",
@@ -434,9 +660,9 @@
                 items: [
                     { name: "Drops Domstal Baby (ml)", dose: formatNum((0.4 * weight) / 10) + " ml", formula: "(0.4 * weight) / 10" },
                     { name: "Syrup Emeset (ml)", dose: formatNum((0.1 * 5 * weight) / 2) + " ml", formula: "(0.1 * 5 * weight) / 2" },
-                    { name: "Syrup Domstal (ml)", dose: formatNum((0.3 * 5 * weight) / 5) + " ml", formula: "(0.3 * 5 * weight) / 5" },
-                    { name: "Tablet Emeset (4mg)", dose: emesetTabResult, formula: "Target = (0.1 * weight). Closest fraction of 4mg tab." }
-                ]
+                    { name: "Syrup Domstal (ml)", dose: formatNum((0.3 * 5 * weight) / 5) + " ml", formula: "(0.3 * 5 * weight) / 5" }
+                ],
+                tabletItems: [{ name: "Tablet Emeset (4mg)", result: emesetTabResult }]
             },
             {
                 title: "Cefixime",
@@ -445,6 +671,19 @@
                     { name: "Syrup Cefi 50mg (ml)", dose: formatNum((25 * weight) / 50) + " ml", formula: "(25 * weight) / 50" },
                     { name: "Syrup Ziprox 100mg (ml)", dose: formatNum((25 * weight) / 100) + " ml", formula: "(25 * weight) / 100" },
                     { name: "Drops Monocef (25mg/1ml)", dose: formatNum((5 * weight) / 25) + " ml", formula: "(5 * weight) / 25" }
+                ]
+            },
+            {
+                title: "Ceftriaxone (IV)",
+                icon: "fa-syringe",
+                rangeItems: [
+                    {
+                        name: "Ceftriaxone Dose Range",
+                        lowerMg: (50 * weight) / 2,
+                        upperMg: (100 * weight) / 2,
+                        formulaLower: "(50 * weight) / 2",
+                        formulaUpper: "(100 * weight) / 2"
+                    }
                 ]
             },
             {
@@ -480,17 +719,16 @@
         resultsArea.innerHTML = "";
         resultsArea.style.display = "block";
 
-        categories.forEach((cat) => {
+        categories.forEach((cat, index) => {
             const card = document.createElement('div');
             card.className = 'category-card';
-            
+            card.style.animationDelay = (index * 55) + "ms";
+
             let itemsHtml = "";
-            cat.items.forEach(item => {
+            (cat.items || []).forEach(item => {
                 itemsHtml += `
                     <div class="med-item">
-                        <div class="med-name">
-                            <i class="fa-solid fa-flask"></i> ${item.name}
-                        </div>
+                        <div class="med-name"><i class="fa-solid fa-flask"></i> ${item.name}</div>
                         <div class="med-dose">${item.dose}</div>
                         <div class="rationale-box">
                             <div class="rationale-title"><i class="fa-solid fa-circle-info"></i> Rationale</div>
@@ -500,10 +738,19 @@
                 `;
             });
 
+            (cat.tabletItems || []).forEach(item => {
+                itemsHtml += buildTabletDoseHtml(item.name, item.result);
+            });
+
+            (cat.rangeItems || []).forEach(item => {
+                itemsHtml += buildRangeDoseHtml(item.name, item.lowerMg, item.upperMg, item.formulaLower, item.formulaUpper);
+            });
+
             card.innerHTML = `
-                <div class="category-header collapsed" onclick="toggleCategory(this)">
+                <div class="category-header collapsed" onclick="toggleCategory(this)" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();toggleCategory(this);}">
                     <div class="category-title">
-                        <i class="fa-solid ${cat.icon}"></i> ${cat.title}
+                        <div class="icon-chip"><i class="fa-solid ${cat.icon}"></i></div>
+                        ${cat.title}
                     </div>
                     <i class="fa-solid fa-chevron-down toggle-icon"></i>
                 </div>
@@ -513,8 +760,34 @@
             `;
             resultsArea.appendChild(card);
         });
-        
+
         resultsArea.scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function calculateDoses() {
+        const weight = parseFloat(document.getElementById('weightInput').value);
+        if (!weight || weight <= 0) {
+            alert("Please enter a valid weight in kg.");
+            return;
+        }
+
+        const btn = document.getElementById('calcBtn');
+        const label = document.getElementById('calcBtnLabel');
+        const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+        if (reduceMotion) {
+            runCalculation();
+            return;
+        }
+
+        btn.disabled = true;
+        label.innerHTML = 'Measuring<span class="btn-dots"><span>.</span><span>.</span><span>.</span></span>';
+
+        setTimeout(() => {
+            runCalculation();
+            btn.disabled = false;
+            label.textContent = "Calculate All Doses";
+        }, 380);
     }
 
     window.toggleCategory = function(header) {
@@ -524,3 +797,4 @@
 
 </body>
 </html>
+    
